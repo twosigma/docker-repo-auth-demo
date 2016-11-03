@@ -1,13 +1,37 @@
+import jose
+import logging
 from functools import wraps
 from flask import request, jsonify
+from tokens import Token
 
 
 def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    request.user = username
-    return True
+    if username == 'demouser':
+        if password == 'demopass':
+            request.user = username
+            logging.info('Authenticated demouser with password {}'.format(password))
+            return True
+        logging.info('Failed to authenticate demouser with password {}'.format(password))
+    elif username == 'PASSTOKEN':
+        try:
+            token = Token('password')
+            decoded_token = token.decode_token(password)
+            request.user = decoded_token['sub']
+            logging.info('Valid password token from {}'.format(request.user))
+            return True
+        except jose.exceptions.JOSEError as e:
+            logging.info('Password token error {}'.format(repr(e)))
+    elif username == 'NOTIFICATION':
+        if password == 'notipass':
+        # if password == 'notipassword':
+            request.user = username
+            logging.info('Authenticated NOTIFICATION with password {}'.format(password))
+            return True
+        logging.info('Failed to authenticate NOTIFICATION with password {}'.format(password))
+    return False
 
 
 def authenticate():

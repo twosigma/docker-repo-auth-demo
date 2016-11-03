@@ -1,0 +1,37 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+auth:
+  token:
+    realm: https://localhost:8080/tokens
+    service: registry
+    issuer: auth
+    rootcertbundle: /ssl/auth.cert
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+  tls:
+    certificate: /ssl/localhost.cert
+    key: /ssl/localhost.key
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
+notifications:
+  endpoints:
+    - name: audit
+      url: https://localhost:8080/notifications
+      headers:
+        # echo -n "NOTIFICATION:notipass" | base64
+        Authorization: ["Basic Tk9USUZJQ0FUSU9OOm5vdGlwYXNz"]
+      timeout: 1s
+      threshold: 5
+      backoff: 10s

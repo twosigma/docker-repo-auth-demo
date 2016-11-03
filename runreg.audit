@@ -1,0 +1,12 @@
+#!/bin/sh
+
+docker run -d --restart=always \
+    --network host \
+    -v $PWD/registry.yml.audit:/etc/docker/registry/config.yml \
+    -v $PWD/ssl:/ssl \
+    -v $PWD/ssl/ca.cert:/usr/local/share/ca-certificates/demo.crt \
+    --name registry \
+    --user 1002 \
+    registry:2
+docker exec -u root registry chown 1002 /var/lib/registry
+docker exec -u root registry /usr/sbin/update-ca-certificates

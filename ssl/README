@@ -1,0 +1,14 @@
+openssl genrsa -out ca.key 2048
+chmod 600 ca.key
+
+echo "Enter 'CA for Demo' in the CN field"
+openssl req -x509 -new -key ca.key -out ca.cert -days 3650
+
+for h in auth localhost; do
+    openssl genrsa -out $h.key 2048
+    chmod 600 $h.key
+    echo "Enter '$h' in the CN field"
+    openssl req -new -key $h.key -out $h.csr -days 3650
+    openssl x509 -req -in $h.csr -out $h.cert \
+        -CA ca.cert -CAkey ca.key -CAcreateserial
+done

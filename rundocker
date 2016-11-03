@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Get a shell to run this:
+# docker exec -it dockerclient bash
+
+PATH=/root/dockregtalk:$PATH docker "$@"

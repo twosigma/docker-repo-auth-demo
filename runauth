@@ -1,0 +1,17 @@
+#!/bin/sh
+
+docker run -d --restart=always \
+    --network host \
+    -v $PWD/registry-oauth-server:/server \
+    -v $PWD/ssl:/ssl \
+    -e HTTPS_CERT_PATH=/ssl/localhost.cert \
+    -e HTTPS_KEY_PATH=/ssl/localhost.key \
+    -e SIGNING_KEY_PATH=/ssl/auth.key \
+    -e SIGNING_KEY_TYPE=RSA \
+    -e SIGNING_KEY_ALG=RS256 \
+    -e ISSUER=auth \
+    -e TOKEN_EXPIRATION=3600 \
+    -e TOKEN_TYPE=JWT \
+    --name auth \
+    --user 1001 \
+    auth

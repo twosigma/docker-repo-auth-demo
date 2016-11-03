@@ -72,6 +72,7 @@ class Token(object):
         self.signing_key_alg = SIGNING_KEY_ALG
         self.token_expiration = TOKEN_EXPIRATION
         self.token_type = TOKEN_TYPE
+        self.audience = service
         self.header = {
             'typ': self.token_type,
             'alg': self.signing_key_alg,
@@ -107,8 +108,12 @@ class Token(object):
         return self.claim
 
     def encode_token(self):
-        token = jwt.encode(self.claim, self.signing_key,
+        return jwt.encode(self.claim, self.signing_key,
                            algorithm=self.signing_key_alg,
                            headers=self.header)
 
-        return token
+    def decode_token(self, token):
+        return jwt.decode(token, self.signing_key,
+                           algorithms=[self.signing_key_alg],
+                           audience=self.audience,
+                           issuer=self.issuer)
